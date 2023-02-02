@@ -1,0 +1,288 @@
+Define global editor configuration to vs code
+`git config --global core.editor "code --wait"`
+
+Define global diff configuration to vs code
+`git config --global diff.tool vscode`
+
+How to launch vs code as a diff tool
+`git config --global difftool.vscode.cmd "code --wait --diff $LOCAL $REMOTE"`
+
+Define global editor configuration to vim
+`git config --global core.editor "vim"`
+
+Edit global configuration settings
+`git config --global -e`
+
+END of lines
+Windows
+Carriage return + Line feed
+
+Linux/Mac
+Line feed
+
+Get a help message
+`git command -h
+
+Skip stagin area
+`git commit -a -m "message"`
+
+remove a file, adds to staging area
+`rm file
+
+remove file from working directory and staging area
+`git rm file`
+
+
+rename files and changes to the working directory and staging area
+`git mv file_from file_to`
+
+Show files in staging area
+`git ls-files"
+
+Remove a file from staging area.
+Remove file from index (old term for staging area)
+`git rm --cached -r file`
+
+SHORT Status of the working directory
+We have 2 columns, the first column is the staging area, the second column is the working directory
+
+`git status -s`
+
+To see in staged area what is to be committed
+`git diff --staged`
+`git difftool --staged`
+
+To see what is in the working directory
+`git diff`
+`git difftool`
+
+VIEWING COMMIT HISTORY
+`git log --oneline`
+`git log --oneline`
+`git log --oneline --graph --decorate --all`
+
+SHOW content of the commit
+`git show <commit>`
+
+Show contents of the commit of specific file without diff
+`git show <commit>:<file>`
+
+List all the files and directories that were changed in a commit
+`git ls-tree -r <commit>`
+
+Using git show we can see objects in git database
+Blobs are files
+Trees are directories
+
+Unstage file
+`git restore --staged <file>`
+
+Throw away changes in the working directory
+`git restore <file>`
+`git clean -df <file>`
+
+Restore takes copy from the next environment
+If the file we want to restore is in working directory,git will restore it from staging area
+If the file we want to restore is in staging area, git will restore it from the last commit
+
+Restoring a file to a previous version
+`git restore --source=<commit> <file>`
+`git restore --source=HEAD~1 <file>`
+
+GIT log options
+Log all files that have been changed in each commit
+`git log --oneline --stat`
+
+Log actual changes in each commit
+`git log --oneline --patch`
+
+Filter the history
+Last 3 commits of the commit history
+`git log --oneline -3`
+
+by author
+`git log --oneline --author="author name"`
+
+by date
+`git log --oneline --since="2019-01-01"`
+
+all commits from yesterday
+`git log --oneline --since="yesterday"`
+
+from one month ago
+`git log --oneline --since="1 month ago"`
+
+filter by subject
+`git log --oneline --grep="subject"`
+
+filter by content
+git log --oneline -S"content"
+
+show all commits that have modified specific file
+`git log --oneline -- file`
+
+Formatting the log output
+`git log --pretty="format"
+
+Create aliases
+`git config --global alias.lg "log --oneline --graph --decorate --all"`
+
+Git bisect
+`git bisect start`
+
+all people contributed to this project
+`git shortlog -s -n`
+
+History Log specific file stats commit
+`git log --oneline -- file`
+
+History Log specific file commit diff
+`git log --oneline -p -- file`
+
+Recover deleted file from history
+1. Find the commit where the file was deleted
+2. Restore the file from the commit
+`git log --oneline -- file`
+`git checkout <commit> -- <file>`
+`git checkout <commit> -- <directory>`
+˙git commit -m "message"`
+
+TAGS in git
+Lightweight tags
+`git tag <tag name>`
+
+GIT BRANCHES
+Create a branch
+`git branch <branch name>`
+
+Create and switch to a new branch
+`git checkout -b <branch name>`
+`git switch -C <branch name>`
+
+Rename a branch
+`git branch -m <old branch name> <new branch name>`
+
+Show me all commits on some other branch but not ons master branch
+`git log master..other_branch`
+
+Show the changes and not a list of commits
+`git diff master <branch name>`
+
+Show only the files that have changed
+`git diff master <branch name> --name-status`
+
+When we change branches git resets our working directory to the state of the last commit on that branch
+
+STASHING
+By default new untracked files are not stashed
+
+Create a new stash with push
+`git stash push -m "message"`
+
+To include untracked file we use -am
+`git stash push -am "message"`
+
+List stashed files
+`git stash list`
+
+Show the content of the stash
+
+Apply stash to the working directory
+`git stash apply <stash name>`
+
+When we apply we want to remove it
+`git stash drop <stash name>`
+
+Remove all stashes
+`git stash clear`
+
+MERGING
+In git we have 2 types of merges
+Fast forward merge
+When branches are linear and we can just move the pointer to the last commit of the branch we are merging
+It brings the pointer from the source to target branch
+To bring the changes first we should be on master
+`git merge <branch name>`
+When we are done with target branch we remove it which removes a pointer
+
+Run a no-forward merge
+`git merge --no-ff <branch name>`
+
+
+3 way merge
+Lets say we have 2 branches, master and feature. Feature branch is ahead 2 commits.
+Before we megge it with master we go back to master and make a new commit.
+Now we have diverged branches and we have changes in master that don't exist in feature branch.
+We can't fast forward merge because we have diverged branches.
+We have to do a 3 way merge.
+Git creates a new commit the combines changes from these 2 branches.
+This commit is called a merge commit.
+Its based on 3 commits, 2 from the branches and 1 new commit that combines them.
+
+If we want to disable fast forward merge only in current repo, use global option for global
+`git config ff no`
+
+View the list of branches we have merged into the master branch
+`git branch --merged`
+When we are done with the branch we should delete it
+`git branch -d <branch name>`
+
+View a branch that has not been merged into the master branch
+`git branch --no-merged`
+
+Merge conflicts
+When same code has been changed in different branches
+If file is changed in one branch but is deleted in another branch
+When the same file had been added in different branches but the content is different
+
+In this cases git will not be able to merge the branches automatically
+We have to resolve the conflicts manually
+
+When we have a merge conflict git will not let us commit
+We have to resolve the conflict first
+
+Undo a faulty merge
+we have 2 options
+1. Remove the commit as if it was never there. we are rewrting history
+This is ok for local but not remote branches
+`git reset --hard <commit>`
+
+2. Revert the merge commit. Create new commit that will cancel all the changes in this commit
+
+GIT reset
+git reset soft. Git is going to have head pointer to a different snapshot but stagina area and working directory will be the same
+
+git reset mix is default option. Git is going to take a snapshot and put it in staging area and working directory will be the same. If we have changes in local directory they will stay there
+
+git reset hard. Git is going to take that new snapshot and put it in our working directory as well
+
+
+
+
+
+When we have a merge conflict git will add a file with .orig extension
+
+Squash merge
+When we have a lot of commits in a branch and we want to merge them into master branch we can squash them into one commit
+`git merge --squash <branch name>`
+`git commit -m "message"`
+delete the old commit
+`git branch -d <branch name>`
+
+REBASING BRANCHES
+first switch to the branch we want to rebase
+`git checkout <branch name>`
+`git rebase master`
+git checkout master
+`git merge <branch name>`
+
+
+"C:\ProgramData\Microsoft\Windows\Start Menu\Programs\Perforce\P4Merge.lnk"
+"C:\ProgramData\Microsoft\Windows\Start Menu\Programs\Perforce\P4Merge.lnk"
+
+If we want to restore just a file from another branch
+`git restore --source="branch name" <file name>`
+
+COLLABORATIONS IN GIT
+command to see if local branch is behind or ahead of remote branch
+`git branch -vv`
